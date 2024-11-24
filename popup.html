@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 250px; font-family: Arial, sans-serif; padding: 10px; }
+    h1 { font-size: 18px; margin-bottom: 10px; }
+    #total-time { font-size: 16px; margin-bottom: 10px; }
+    #time-list { font-size: 14px; }
+    .date-item { margin-bottom: 5px; }
+    button { margin-top: 10px; padding: 5px 10px; }
+    #buttons { display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <h1>YouTube Time Tracker</h1>
+  <div id="total-time">総視聴時間: 読み込み中...</div>
+  <div id="time-list">読み込み中...</div>
+  <div id="buttons">
+    <button id="reset">時間をリセット</button>
+    <button id="save">保存</button>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
