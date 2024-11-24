@@ -2,6 +2,7 @@
 
 let youtubeStartTime = null;
 let currentTabId = null;
+let timeIntervalId = null;
 
 chrome.tabs.onActivated.addListener(activeInfo => {
   chrome.tabs.get(activeInfo.tabId, tab => {
@@ -37,6 +38,11 @@ chrome.windows.onFocusChanged.addListener(windowId => {
 
 function handleTabChange(tab) {
   if (currentTabId !== null && youtubeStartTime !== null) {
+    // ユーザーがYouTubeから離れるとき
+    if (timeIntervalId !== null) {
+      clearInterval(timeIntervalId);
+      timeIntervalId = null;
+    }
     let timeSpent = Date.now() - youtubeStartTime;
     saveTimeData(timeSpent);
     youtubeStartTime = null;
@@ -46,11 +52,23 @@ function handleTabChange(tab) {
   if (tab.url && tab.url.includes('youtube.com')) {
     youtubeStartTime = Date.now();
     currentTabId = tab.id;
+    // インターバルを開始
+    if (timeIntervalId === null) {
+      timeIntervalId = setInterval(() => {
+        let timeSpent = Date.now() - youtubeStartTime;
+        saveTimeData(timeSpent);
+        youtubeStartTime = Date.now(); // 開始時間をリセット
+      }, 1000); // 毎秒実行
+    }
   }
 }
 
 function handleWindowBlur() {
   if (currentTabId !== null && youtubeStartTime !== null) {
+    if (timeIntervalId !== null) {
+      clearInterval(timeIntervalId);
+      timeIntervalId = null;
+    }
     let timeSpent = Date.now() - youtubeStartTime;
     saveTimeData(timeSpent);
     youtubeStartTime = null;
@@ -76,6 +94,10 @@ function saveTimeData(timeSpent) {
 chrome.runtime.onStartup.addListener(() => {
   youtubeStartTime = null;
   currentTabId = null;
+  if (timeIntervalId !== null) {
+    clearInterval(timeIntervalId);
+    timeIntervalId = null;
+  }
 });
 
 // エクステンションがインストールされたとき
